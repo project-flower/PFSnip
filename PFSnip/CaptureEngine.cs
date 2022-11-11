@@ -10,14 +10,21 @@ namespace PFSnip
 {
     internal static class CaptureEngine
     {
+        #region Private Fields
+
+        private static int zOrder = 0;
+
+        #endregion
+
         #region Public Methods
 
-        public static Rectangle[] CollectWindows(out Bitmap bitmap, out Rectangle totalScreenSize)
+        public static (Rectangle, int)[] CollectWindows(out Bitmap bitmap, out Rectangle totalScreenSize)
         {
-            var result = new List<Rectangle>();
+            var result = new List<(Rectangle, int)>();
 
-            var handles = new List<IntPtr>();
-            GCHandle allocated = GCHandle.Alloc(handles);
+            var windows = new List<(IntPtr, int)>();
+            GCHandle allocated = GCHandle.Alloc(windows);
+            zOrder = -1;
 
             try
             {
@@ -32,14 +39,14 @@ namespace PFSnip
                 }
             }
 
-            foreach (IntPtr handle in handles)
+            foreach ((IntPtr, int) window in windows)
             {
                 //if (User32.GetWindowRect(handle, out RECT rect))
-                if (DwmApi.DwmGetWindowAttribute(handle, DWMWINDOWATTRIBUTE.DWMWA_EXTENDED_FRAME_BOUNDS, out RECT rect, Marshal.SizeOf(typeof(RECT))) == 0)
+                if (DwmApi.DwmGetWindowAttribute(window.Item1, DWMWINDOWATTRIBUTE.DWMWA_EXTENDED_FRAME_BOUNDS, out RECT rect, Marshal.SizeOf(typeof(RECT))) == 0)
                 {
                     int top = rect.Top;
                     int left = rect.Left;
-                    result.Add(new Rectangle(left, top, Math.Abs(rect.Right - left), Math.Abs(rect.Bottom - top)));
+                    result.Add((new Rectangle(left, top, Math.Abs(rect.Right - left), Math.Abs(rect.Bottom - top)), window.Item2));
                 }
             }
 
@@ -121,12 +128,13 @@ namespace PFSnip
 
         private static bool WndEnumProc(IntPtr hWnd, IntPtr lParam)
         {
+            ++zOrder;
             GCHandle gch = GCHandle.FromIntPtr(lParam);
-            List<IntPtr> handles;
+            List<(IntPtr, int)> windows;
 
             try
             {
-                handles = (List<IntPtr>)gch.Target;
+                windows = (List<(IntPtr, int)>)gch.Target;
             }
             catch
             {
@@ -145,7 +153,7 @@ namespace PFSnip
                 return true;
             }
 
-            handles.Add(hWnd);
+            windows.Add((hWnd, zOrder));
             return true;
         }
 

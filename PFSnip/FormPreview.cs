@@ -15,7 +15,7 @@ namespace PFSnip
         private int prevX = int.MinValue;
         private int prevY = int.MinValue;
         private int windowIndex = -1;
-        private Rectangle[] windows = new Rectangle[0];
+        private (Rectangle, int)[] windows = new (Rectangle, int)[0];
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace PFSnip
                 return;
             }
 
-            Rectangle window = PointToClient(windows[windowIndex]);
+            Rectangle window = PointToClient(windows[windowIndex].Item1);
 
             try
             {
@@ -164,11 +164,6 @@ namespace PFSnip
             MessageBox.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private bool SmallerThan(Rectangle rectangle1, Rectangle rectangle2)
-        {
-            return (rectangle1.Width * rectangle1.Height) < (rectangle2.Width * rectangle2.Height);
-        }
-
         #endregion
 
         // Designer's Methods
@@ -217,17 +212,18 @@ namespace PFSnip
 
             for (int i = 0; i < windows.Length; ++i)
             {
-                Rectangle window = windows[i];
+                (Rectangle, int) window = windows[i];
+                Rectangle bounds = window.Item1;
                 Point point = pictureBox.PointToScreen(e.Location);
                 int x = point.X;
                 int y = point.Y;
 
-                if (x < window.Left) continue;
-                if (y < window.Top) continue;
-                if (x > window.Right) continue;
-                if (y > window.Bottom) continue;
+                if (x < bounds.Left) continue;
+                if (y < bounds.Top) continue;
+                if (x > bounds.Right) continue;
+                if (y > bounds.Bottom) continue;
 
-                if (candidate >= 0 && !SmallerThan(window, windows[candidate]))
+                if (candidate >= 0 && (window.Item2 > windows[candidate].Item2))
                 {
                     continue;
                 }
@@ -242,7 +238,7 @@ namespace PFSnip
             }
             else if ((candidate != -1) && (candidate != windowIndex))
             {
-                EmphasizeRectangle(PointToClient(windows[candidate]));
+                EmphasizeRectangle(PointToClient(windows[candidate].Item1));
                 windowIndex = candidate;
             }
         }
