@@ -12,7 +12,17 @@ namespace PFSnip
     {
         #region Private Fields
 
+        private static readonly WNDENUMPROC wndEnumProc;
         private static int zOrder = 0;
+
+        #endregion
+
+        #region Static Methods
+
+        static CaptureEngine()
+        {
+            wndEnumProc = new WNDENUMPROC(WndEnumProc);
+        }
 
         #endregion
 
@@ -28,7 +38,6 @@ namespace PFSnip
 
             try
             {
-                var wndEnumProc = new WNDENUMPROC(WndEnumProc);
                 User32.EnumWindows(wndEnumProc, GCHandle.ToIntPtr(allocated));
             }
             finally
