@@ -133,6 +133,7 @@ namespace PFSnip
 
         private Bitmap GetSnippedImage(Rectangle rectangle)
         {
+            rectangle.Intersect(new Rectangle(0, 0, baseImage.Width, baseImage.Height));
             return (baseImage as Bitmap).Clone(rectangle, baseImage.PixelFormat);
         }
 
