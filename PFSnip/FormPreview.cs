@@ -71,11 +71,7 @@ namespace PFSnip
             Image image = pictureBox.Image;
             pictureBox.Image = bitmap;
             baseImage = bitmap.Clone() as Image;
-
-            if (image != null)
-            {
-                image.Dispose();
-            }
+            image?.Dispose();
 
             if (!Visible)
             {
@@ -186,7 +182,7 @@ namespace PFSnip
             }
         }
 
-        private void pictureBox_Click(object sender, System.EventArgs e)
+        private void pictureBox_Click(object sender, EventArgs e)
         {
             try
             {
