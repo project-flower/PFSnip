@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace PFSnip
@@ -143,6 +144,21 @@ namespace PFSnip
             if (baseImage == null)
             {
                 return;
+            }
+
+            string fileName = saveFileDialog.FileName;
+
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                saveFileDialog.FileName = string.Empty;
+
+                try
+                {
+                    saveFileDialog.InitialDirectory = Path.GetDirectoryName(fileName);
+                }
+                catch
+                {
+                }
             }
 
             if (saveFileDialog.ShowDialog(this) != DialogResult.OK)
