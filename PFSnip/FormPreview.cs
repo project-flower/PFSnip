@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
@@ -29,6 +30,9 @@ namespace PFSnip
 #if DEBUG
             TopMost = false;
 #endif
+
+            saveFileDialog.Filter = ImageType.Filter;
+            saveFileDialog.FilterIndex = ImageType.DefaultIndex;
         }
 
         public void DoOperate(Operation operation)
@@ -166,9 +170,20 @@ namespace PFSnip
                 return;
             }
 
+            fileName = saveFileDialog.FileName;
+
             using (Bitmap bitmap = GetSnippedImage(rectangle))
             {
-                bitmap.Save(saveFileDialog.FileName);
+                ImageFormat format = ImageType.GetFormat(Path.GetExtension(fileName));
+
+                if (format == null)
+                {
+                    bitmap.Save(fileName);
+                }
+                else
+                {
+                    bitmap.Save(fileName, format);
+                }
             }
         }
 

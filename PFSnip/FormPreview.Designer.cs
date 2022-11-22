@@ -46,7 +46,6 @@
             // 
             // saveFileDialog
             // 
-            this.saveFileDialog.Filter = "PNG Image|*.png|BMP Image|*.bmp|All Files|*.*";
             this.saveFileDialog.Title = "Save";
             // 
             // FormPreview

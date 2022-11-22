@@ -67,6 +67,7 @@
     <Compile Include="FormPreview.Designer.cs">
       <DependentUpon>FormPreview.cs</DependentUpon>
     </Compile>
+    <Compile Include="ImageType.cs" />
     <Compile Include="NativeApi\DwmApi.cs" />
     <Compile Include="NativeApi\DwmApi.h.cs" />
     <Compile Include="NativeApi\Gdi32.cs" />
